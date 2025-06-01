@@ -1,0 +1,22 @@
+services:
+  llama-container:
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    container_name: llama-container
+    restart: unless-stopped
+
+  gradio-frontend:
+    build: .
+    ports:
+      - "7860:7860"
+    environment:
+      - LLAMA_URL=http://llama-container:11434/v1/chat/completions
+    depends_on:
+      - llama-container
+    container_name: gradio-frontend
+
+volumes:
+  ollama_data:
