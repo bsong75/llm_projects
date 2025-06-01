@@ -8,18 +8,15 @@ services:
     container_name: llama-container
     restart: unless-stopped
 
-  streamlit-app:
+  gradio-frontend:
     build: .
     ports:
-      - "8501:8501"
-    volumes:
-      - ./data:/app/data
-      - ./chroma_db:/app/chroma_db
+      - "7860:7860"
     environment:
       - LLAMA_URL=http://llama-container:11434/v1/chat/completions
     depends_on:
       - llama-container
-    container_name: streamlit-app
+    container_name: gradio-frontend
 
 volumes:
   ollama_data:

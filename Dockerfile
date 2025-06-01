@@ -1,14 +1,21 @@
-FROM python:3.12-slim
+FROM python:3.11-slim
 
-# USER root
 WORKDIR /app
-#Install requirements cached before everything
-RUN pip install --upgrade pip
-COPY requirements.txt requirements.txt
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create data directory
+RUN mkdir -p ./data
+
+COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY . .
-# RUN chmod u+x app.py  
-EXPOSE 7860
+COPY app.py .
 
-CMD [ "python","app.py" ]
+EXPOSE 8501
+
+CMD ["streamlit", "run", "app.py", "--server.address", "0.0.0.0", "--server.port", "8501"]
